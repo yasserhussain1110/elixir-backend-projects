@@ -1,0 +1,22 @@
+<div class="jumbotron">
+  <h2>Welcome to API URL Shortener</h2>
+  <h3>Example creation usage:</h3>
+  <code>https://elixir-url-shortener.herokuapp.com/new/https://www.google.com</code>
+  <br/>
+  <code>https://elixir-url-shortener.herokuapp.com/new/http://foo.com:80</code>
+  <h3>Example creation output</h3>
+  <code>{
+    "original_url":"http://foo.com:80",
+    "short_url":"https://elixir-url-shortener.herokuapp.com/8170"
+    }</code>
+  <h3>Usage:</h3>
+  <code>https://elixir-url-shortener.herokuapp.com/2871</code>
+  <h3>Will redirect to:</h3>
+  <code>https://www.google.com/</code>
+</div>
+
+<div class="source">
+  <a target="_blank" title="Click to see source code!" href="https://github.com/yasserhussain1110/chingu-fcc-speedrun-challenge/tree/master/backend/api-url-shortener">
+    <span class="fa fa-github fa-3x"></span>
+  </a>
+</div>

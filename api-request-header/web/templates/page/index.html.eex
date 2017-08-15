@@ -1,0 +1,4 @@
+<div class="jumbotron">
+  <h3>Welcome to Request Header Parser</h3>
+  <p class="lead">Click <a href="/api/whoami">here</a> to see your browser info!</p>
+</div>

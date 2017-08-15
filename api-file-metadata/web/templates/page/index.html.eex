@@ -1,0 +1,19 @@
+<div class="jumbotron">
+  <h3>Welcome to File Metadata Microservice</h3>
+
+  <%= form_for @conn, api_path(@conn, :get_file_size), [as: :search, multipart: true], fn f -> %>
+  <div class="form-group">
+    <label class="btn btn-default btn-file">
+      <span class="message">Choose File</span>
+      <%= file_input f, :file, class: "filestyle", style: "display: none"%>
+    </label>
+    <button class="btn btn-success">Upload</button>
+  </div>
+  <% end %>
+</div>
+
+<div class="source">
+  <a target="_blank" title="Click to see source code!" href="https://github.com/yasserhussain1110/chingu-fcc-speedrun-challenge/tree/master/backend/api-file-metadata">
+    <span class="fa fa-github fa-3x"></span>
+  </a>
+</div>

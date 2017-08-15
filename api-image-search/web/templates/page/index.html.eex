@@ -1,0 +1,15 @@
+<div class="jumbotron">
+  <h3>Welcome to API ImageSearch Abstraction</h3>
+  <h3>Example search:</h3>
+  <code>https://elixir-image-search.herokuapp.com/api/imagesearch/robots?offset=30</code>
+  <br/>
+  <h3>Example list recent searches:</h3>
+  <code>https://elixir-image-search.herokuapp.com/api/latest</code>
+  <h5>Note: Offsets will be adjusted to be multiples of 10.</h5>
+</div>
+
+<div class="source">
+  <a target="_blank" title="Click to see source code!" href="https://github.com/yasserhussain1110/chingu-fcc-speedrun-challenge/tree/master/backend/api-image-search">
+    <span class="fa fa-github fa-3x"></span>
+  </a>
+</div>
