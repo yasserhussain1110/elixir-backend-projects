@@ -18,7 +18,8 @@ config :api_image_search, ApiImageSearch.Endpoint,
   cache_static_manifest: "priv/static/manifest.json",
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
   cx: System.get_env("cx"),
-  key: System.get_env("key")
+  key: System.get_env("key"),
+  BING_SUBSCRIPTION_KEY: System.get_env("BING_SUBSCRIPTION_KEY")
 
 # Configure your database
 config :api_image_search, ApiImageSearch.Repo,
