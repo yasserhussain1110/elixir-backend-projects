@@ -3,71 +3,62 @@ defmodule ApiImageSearch.ApiController do
 
   alias ApiImageSearch.SearchTerm
 
-  defp get_api_values(:key) do
-    Application.get_env(:api_image_search, ApiImageSearch.Endpoint)[:key]
+  defp get_api_value(key) do
+    Application.get_env(:api_image_search, ApiImageSearch.Endpoint)[key]
   end
 
-  defp get_api_values(:cx) do
-    Application.get_env(:api_image_search, ApiImageSearch.Endpoint)[:cx]
-  end
+  defp get_search_result(url) do
+    {:ok, apiResponse} = HTTPoison.get(url,
+      ["Ocp-Apim-Subscription-Key": get_api_value(:BING_SUBSCRIPTION_KEY)],
+      [ ssl: [{:versions, [:'tlsv1.2']}] ])
 
-  defp adjust_offset(offset) do
-    offset
-      |> String.to_integer
-      |> Integer.floor_div(10)
-      |> (fn x, y -> x * y end).(10)
-      |> Integer.to_string
-  end
-
-  defp search_image_and_send(url, conn) do
-    response = url
-      |> HTTPoison.get
-      |> elem(1)
-      |> (fn api_result -> Poison.decode!(api_result.body)["results"] end).()
+    apiResponse.body
+      |> Poison.decode!
+      |> Access.get("value")
       |> Enum.map(fn decoded_result ->
           %{
-            "unescapedUrl" => unescapedUrl,
-            "originalContextUrl" => originalContextUrl,
-            "contentNoFormatting" => contentNoFormatting,
-            "tbUrl" => tbUrl
+            "contentUrl" => contentUrl,
+            "hostPageUrl" => hostPageUrl,
+            "thumbnailUrl" => thumbnailUrl
           } = decoded_result
 
           %{
-            url: unescapedUrl,
-            context: originalContextUrl,
-            snippet: contentNoFormatting,
-            thumbnail: tbUrl
+            url: contentUrl,
+            context: hostPageUrl,
+            thumbnail: thumbnailUrl
           }
         end)
-    json conn, response
   end
 
   defp create_search_url(search_term, offset) do
-    "https://www.googleapis.com/customsearch/v1element?prettyPrint=false&hl=en&searchtype=image&num=10&"
-      <> "key=#{get_api_values :key}&"
-      <> "cx=#{get_api_values :cx}&"
-      <> (if offset !== nil, do: "start=" <> adjust_offset(offset) <> "&", else: "")
-      <> "q=#{search_term}";
+    "https://api.cognitive.microsoft.com/bing/v7.0/images/search?count=20&"
+      <> "q=#{search_term}&"
+      <> "offset=#{offset}"
   end
 
   defp insert_term_in_database(search_term) do
     changeset = SearchTerm.changeset(%SearchTerm{}, %{term: search_term})
     Repo.insert(changeset)
-    search_term
   end
 
   def image_search(conn, %{"offset" => offset, "term" => [search_term]}) do
-    search_term
-      |> insert_term_in_database
+    search_result = search_term
       |> create_search_url(offset)
-      |> search_image_and_send(conn)
+      |> get_search_result
+
+    return_val = json conn, search_result
+    insert_term_in_database(search_term)
+    return_val
   end
 
   def image_search(conn, %{"term" => [search_term]}) do
-    search_term
-      |> insert_term_in_database
-      |> create_search_url(nil)
-      |> search_image_and_send(conn)
+    search_result = search_term
+      |> create_search_url(0)
+      |> get_search_result
+
+    return_val = json conn, search_result
+    insert_term_in_database(search_term)
+    return_val
   end
 
   def image_search(conn, %{"term" => []}) do
